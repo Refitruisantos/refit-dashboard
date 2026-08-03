@@ -1,0 +1,281 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id            String           @id @default(cuid())
+  name          String
+  email         String           @unique
+  phone         String?
+  birthDate     DateTime?
+  address       String?
+  status        String           @default("active")
+  joinedAt      DateTime         @default(now())
+  lastVisit     DateTime?
+  notes         String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  subscriptions Subscription[]
+  payments      Payment[]
+  attendances   Attendance[]
+  assessments   Assessment[]
+  clientGoals   ClientGoal[]
+  appointments  Appointment[]
+}
+
+model Service {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  description   String?
+  price         Float
+  duration      Int
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+  attendances   Attendance[]
+  appointments  Appointment[]
+  payments      Payment[]
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  clientId  String
+  serviceId String
+  startDate DateTime
+  endDate   DateTime?
+  status    String   @default("active")
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id])
+
+  @@index([clientId])
+  @@index([serviceId])
+}
+
+model Payment {
+  id          String    @id @default(cuid())
+  clientId    String
+  serviceId   String?
+  amount      Float
+  period      String?
+  dueDate     DateTime
+  paidAt      DateTime?
+  method      String?
+  status      String    @default("pending")
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service     Service?  @relation(fields: [serviceId], references: [id])
+
+  @@index([clientId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([paidAt])
+}
+
+model Expense {
+  id          String    @id @default(cuid())
+  description String
+  category    String
+  supplier    String?
+  amount      Float
+  expenseDate DateTime
+  dueDate     DateTime
+  paidAt      DateTime?
+  method      String?
+  status      String    @default("pending")
+  type        String    @default("variable")
+  recurrence  String    @default("once")
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@index([type])
+  @@index([expenseDate])
+  @@index([dueDate])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  clientId  String
+  serviceId String
+  date      DateTime
+  duration  Int?
+  notes     String?
+  createdAt DateTime @default(now())
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id])
+
+  @@index([clientId])
+  @@index([serviceId])
+  @@index([date])
+}
+
+model CashFlow {
+  id          String    @id @default(cuid())
+  type        String
+  description String
+  category    String?
+  amount      Float
+  date        DateTime
+  method      String?
+  status      String    @default("realized")
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([date])
+}
+
+model Settings {
+  id                String   @id @default(cuid())
+  companyName       String   @default("REFIT")
+  companyEmail      String?
+  companyPhone      String?
+  companyAddress    String?
+  companyNif        String?
+  companyWebsite    String?
+  companyLogo       String?
+  currency          String   @default("EUR")
+  initialBalance    Float    @default(0)
+  initialBalanceDate DateTime @default(now())
+  fiscalYear        Int      @default(2026)
+  dateFormat        String   @default("dd/MM/yyyy")
+  firstDayOfWeek    Int      @default(1)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  color     String?
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, type])
+  @@index([type])
+  @@index([active])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  name        String
+  category    String
+  metric      String
+  target      Float
+  unit        String
+  startDate   DateTime
+  endDate     DateTime
+  periodicity String    @default("monthly")
+  notes       String?
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@index([endDate])
+}
+
+model Assessment {
+  id         String   @id @default(cuid())
+  clientId   String
+  date       DateTime
+  weight     Float
+  bodyFat    Float
+  muscleMass Float
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([date])
+}
+
+model ClientGoal {
+  id        String   @id @default(cuid())
+  clientId  String
+  title     String
+  target    String
+  deadline  DateTime
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([status])
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  clientId    String
+  serviceId   String
+  trainerId   String?
+  date        DateTime
+  startTime   String
+  duration    Int
+  status      String   @default("scheduled")
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service     Service  @relation(fields: [serviceId], references: [id])
+
+  @@index([clientId])
+  @@index([serviceId])
+  @@index([date])
+  @@index([status])
+}
+
+model Event {
+  id              String   @id @default(cuid())
+  name            String
+  category        String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime?
+  startTime       String?
+  location        String?
+  responsible     String?
+  participants    String?
+  budgetPlanned   Float?
+  budgetActual    Float?
+  status          String   @default("idea")
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@index([startDate])
+}

@@ -1,0 +1,20 @@
+import { Router } from 'express';
+import {
+  getAllServices,
+  getServiceById,
+  createService,
+  updateService,
+  deleteService,
+  toggleServiceStatus,
+} from '../controllers/serviceController.js';
+
+const router = Router();
+
+router.get('/', getAllServices);
+router.get('/:id', getServiceById);
+router.post('/', createService);
+router.put('/:id', updateService);
+router.delete('/:id', deleteService);
+router.patch('/:id/toggle', toggleServiceStatus);
+
+export default router;
