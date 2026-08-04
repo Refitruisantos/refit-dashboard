@@ -16,11 +16,8 @@ COPY backend/ ./
 # Gerar Prisma Client
 RUN npx prisma generate
 
-# Build TypeScript
-RUN npm run build
-
-# Migrar base de dados e iniciar
-CMD npx prisma migrate deploy && npm start
+# Migrar base de dados e iniciar (usar tsx diretamente, sem build)
+CMD npx prisma migrate deploy && npx tsx src/server.ts
 
 # Expor porta
 EXPOSE 4000
