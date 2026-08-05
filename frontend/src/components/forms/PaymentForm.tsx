@@ -46,19 +46,20 @@ export function PaymentForm({ payment, onClose, onSuccess }: PaymentFormProps) {
 
   // Auto-preencher serviço e valor quando cliente é selecionado
   useEffect(() => {
-    if (formData.clientId && !isEditing) {
-      const selectedClient = clients.find(c => c.id === formData.clientId);
-      if (selectedClient?.subscriptions && selectedClient.subscriptions.length > 0) {
-        const activeSubscription = selectedClient.subscriptions.find(s => s.status === 'active');
-        if (activeSubscription) {
-          setFormData(prev => ({
-            ...prev,
-            serviceId: activeSubscription.serviceId,
-            amount: activeSubscription.price,
-          }));
-        }
-      }
-    }
+    // Temporariamente desativado - subscriptions não está no tipo Client
+    // if (formData.clientId && !isEditing) {
+    //   const selectedClient = clients.find(c => c.id === formData.clientId);
+    //   if (selectedClient?.subscriptions && selectedClient.subscriptions.length > 0) {
+    //     const activeSubscription = selectedClient.subscriptions.find(s => s.status === 'active');
+    //     if (activeSubscription) {
+    //       setFormData(prev => ({
+    //         ...prev,
+    //         serviceId: activeSubscription.serviceId,
+    //         amount: activeSubscription.price,
+    //       }));
+    //     }
+    //   }
+    // }
   }, [formData.clientId, clients, isEditing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
