@@ -20,7 +20,9 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://courageous-selkie-5332bb.netlify.app', 'http://localhost:5173']
+    : 'http://localhost:5173',
   credentials: true,
 }));
 app.use(express.json());
