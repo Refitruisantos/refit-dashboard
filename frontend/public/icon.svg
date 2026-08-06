@@ -1,0 +1,13 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo azul escuro -->
+  <rect width="512" height="512" fill="#0f172a" rx="80"/>
+  
+  <!-- Círculo azul claro -->
+  <circle cx="256" cy="200" r="80" fill="#3b82f6" opacity="0.2"/>
+  
+  <!-- Texto REFIT -->
+  <text x="256" y="280" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="#3b82f6" text-anchor="middle">REFIT</text>
+  
+  <!-- Subtítulo -->
+  <text x="256" y="340" font-family="Arial, sans-serif" font-size="32" fill="#94a3b8" text-anchor="middle">Dashboard</text>
+</svg>

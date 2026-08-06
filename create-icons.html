@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Criar Ícones REFIT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0f172a;
+            color: white;
+        }
+        .icon-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #3b82f6;
+            margin: 10px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .instructions {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Criar Ícones REFIT</h1>
+    
+    <div class="instructions">
+        <h2>📋 Instruções:</h2>
+        <ol>
+            <li>Clica nos botões abaixo para gerar os ícones</li>
+            <li>Guarda cada ícone com o nome correto</li>
+            <li>Coloca os ficheiros em: <code>frontend/public/</code></li>
+        </ol>
+    </div>
+
+    <div class="icon-preview">
+        <h3>Ícone 192x192</h3>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+        <br>
+        <button onclick="downloadIcon(192)">📥 Download icon-192.png</button>
+    </div>
+
+    <div class="icon-preview">
+        <h3>Ícone 512x512</h3>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+        <br>
+        <button onclick="downloadIcon(512)">📥 Download icon-512.png</button>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const scale = size / 512;
+            
+            // Fundo azul escuro
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Círculo azul claro (decorativo)
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+            ctx.beginPath();
+            ctx.arc(size/2, size*0.39, size*0.156, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Texto REFIT
+            ctx.fillStyle = '#3b82f6';
+            ctx.font = `bold ${size*0.234}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('REFIT', size/2, size*0.547);
+            
+            // Subtítulo Dashboard
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = `${size*0.0625}px Arial, sans-serif`;
+            ctx.fillText('Dashboard', size/2, size*0.664);
+        }
+
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const link = document.createElement('a');
+            link.download = `icon-${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Desenhar ícones ao carregar
+        window.onload = function() {
+            drawIcon(document.getElementById('canvas192'), 192);
+            drawIcon(document.getElementById('canvas512'), 512);
+        };
+    </script>
+</body>
+</html>
