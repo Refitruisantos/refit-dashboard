@@ -1,0 +1,7 @@
+{
+  "name": "REFIT Dashboard",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
