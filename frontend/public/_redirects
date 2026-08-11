@@ -1,0 +1,5 @@
+# Redirect API calls to Render backend
+/api/*  https://refit-dashboard.onrender.com/api/:splat  200
+
+# SPA fallback - todas as outras rotas vão para index.html
+/*  /index.html  200
