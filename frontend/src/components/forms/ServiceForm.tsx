@@ -157,8 +157,8 @@ export function ServiceForm({ service, onClose, onSuccess }: ServiceFormProps) {
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 disabled={isLoading}
               >
-                <option value="monthly">Mensal (valor fixo por mês)</option>
-                <option value="per_session">Por Sessão (valor por cada treino)</option>
+                <option value="monthly">💶 Mensal - Cliente paga valor fixo por mês</option>
+                <option value="per_session">🎯 Por Sessão - Cliente paga por cada treino</option>
               </select>
             </div>
 
