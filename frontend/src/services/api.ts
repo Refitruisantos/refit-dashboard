@@ -58,22 +58,22 @@ export interface DashboardQuery {
  * Obtém os dados do dashboard da API.
  */
 export async function getDashboard({ month, year }: DashboardQuery): Promise<{ data: DashboardData; source: 'api' | 'demo' }> {
-  const data = await request<DashboardData>(`/dashboard?month=${month}&year=${year}`);
+  const data = await request<DashboardData>(`/api/dashboard?month=${month}&year=${year}`);
   return { data, source: 'api' };
 }
 
 export const api = {
   request,
-  finance: (q: DashboardQuery) => request(`/finance?month=${q.month}&year=${q.year}`),
-  expenses: (q: DashboardQuery) => request(`/expenses?month=${q.month}&year=${q.year}`),
-  payments: (q: DashboardQuery) => request(`/payments?month=${q.month}&year=${q.year}`),
-  clients: () => request('/clients'),
-  reports: (q: DashboardQuery) => request(`/reports?month=${q.month}&year=${q.year}`),
-  cashflow: (q: DashboardQuery) => request(`/cashflow?year=${q.year}`),
-  goals: (q: DashboardQuery) => request(`/goals?month=${q.month}&year=${q.year}`),
-  alerts: (q: DashboardQuery) => request(`/alerts?month=${q.month}&year=${q.year}`),
+  finance: (q: DashboardQuery) => request(`/api/finance?month=${q.month}&year=${q.year}`),
+  expenses: (q: DashboardQuery) => request(`/api/expenses?month=${q.month}&year=${q.year}`),
+  payments: (q: DashboardQuery) => request(`/api/payments?month=${q.month}&year=${q.year}`),
+  clients: () => request('/api/clients'),
+  reports: (q: DashboardQuery) => request(`/api/reports?month=${q.month}&year=${q.year}`),
+  cashflow: (q: DashboardQuery) => request(`/api/cashflow?year=${q.year}`),
+  goals: (q: DashboardQuery) => request(`/api/goals?month=${q.month}&year=${q.year}`),
+  alerts: (q: DashboardQuery) => request(`/api/alerts?month=${q.month}&year=${q.year}`),
   login: (email: string, password: string) =>
-    request<{ token: string }>('/auth/login', {
+    request<{ token: string }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
