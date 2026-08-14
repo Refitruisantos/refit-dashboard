@@ -1,6 +1,8 @@
 import type { DashboardData } from '@/types/dashboard';
 
-const API_URL = import.meta.env.VITE_API_URL ?? '/api';
+// Garantir que em produção usa sempre o Render
+const API_URL = import.meta.env.VITE_API_URL || 
+                (import.meta.env.PROD ? 'https://refit-dashboard.onrender.com' : '/api');
 const TOKEN_KEY = 'refit.token';
 
 export const auth = {

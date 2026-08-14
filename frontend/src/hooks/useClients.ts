@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Client } from '@/types/client';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || 
+                (import.meta.env.PROD ? 'https://refit-dashboard.onrender.com' : 'http://localhost:4000');
 
 interface CreateClientData {
   name: string;
