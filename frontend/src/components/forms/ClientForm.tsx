@@ -260,20 +260,6 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
               </>
             )}
 
-            {/* Morada */}
-            <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Morada</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Rua, Número, Cidade"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-muted-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                disabled={isLoading}
-              />
-            </div>
-
             {/* Observações */}
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Observações</label>
