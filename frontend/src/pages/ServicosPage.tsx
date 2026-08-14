@@ -12,6 +12,7 @@ interface Service {
   description?: string;
   price: number;
   duration: number;
+  billingType?: 'monthly' | 'per_session';
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -137,7 +138,9 @@ export function ServicosPage() {
                         <span className="text-xs font-medium uppercase tracking-wider">Preço</span>
                       </div>
                       <p className="mt-1 text-xl font-bold">€{service.price.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">por mês</p>
+                      <p className="text-xs text-muted-foreground">
+                        {service.billingType === 'per_session' ? 'por sessão' : 'por mês'}
+                      </p>
                     </div>
 
                     <div className="rounded-lg border border-border/50 p-3">
