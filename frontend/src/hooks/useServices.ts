@@ -9,6 +9,7 @@ interface Service {
   description?: string;
   price: number;
   duration: number;
+  billingType?: 'monthly' | 'per_session';
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -19,6 +20,7 @@ interface CreateServiceData {
   description?: string;
   price: number;
   duration: number;
+  billingType?: 'monthly' | 'per_session';
   active?: boolean;
 }
 

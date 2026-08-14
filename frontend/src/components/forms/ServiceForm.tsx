@@ -8,6 +8,7 @@ interface Service {
   description?: string;
   price: number;
   duration: number;
+  billingType?: 'monthly' | 'per_session';
   active: boolean;
 }
 
@@ -27,6 +28,7 @@ export function ServiceForm({ service, onClose, onSuccess }: ServiceFormProps) {
     description: service?.description || '',
     price: service?.price || 0,
     duration: service?.duration || 60,
+    billingType: service?.billingType || 'monthly' as 'monthly' | 'per_session',
     active: service?.active ?? true,
   });
 
@@ -143,11 +145,28 @@ export function ServiceForm({ service, onClose, onSuccess }: ServiceFormProps) {
               />
             </div>
 
+            {/* Tipo de Cobrança */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Tipo de Cobrança <span className="text-red-400">*</span>
+              </label>
+              <select
+                name="billingType"
+                value={formData.billingType}
+                onChange={(e) => setFormData(prev => ({ ...prev, billingType: e.target.value as 'monthly' | 'per_session' }))}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                disabled={isLoading}
+              >
+                <option value="monthly">Mensal (valor fixo por mês)</option>
+                <option value="per_session">Por Sessão (valor por cada treino)</option>
+              </select>
+            </div>
+
             {/* Preço e Duração */}
             <div className="grid gap-3 md:grid-cols-2">
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Preço Mensal (€) <span className="text-red-400">*</span>
+                  {formData.billingType === 'monthly' ? 'Preço Mensal (€)' : 'Preço por Sessão (€)'} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="number"
