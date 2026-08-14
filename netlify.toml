@@ -1,11 +1,10 @@
 [build]
   base = "frontend"
-  command = "npm run build"
+  command = "VITE_API_URL=https://refit-dashboard.onrender.com npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
-  VITE_API_URL = "https://refit-dashboard.onrender.com"
 
 [[redirects]]
   from = "/*"
