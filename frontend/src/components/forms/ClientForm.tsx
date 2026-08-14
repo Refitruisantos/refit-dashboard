@@ -35,6 +35,13 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
     if (!formData.serviceId || !formData.weeklyFrequency) return 0;
     const selectedService = services.find(s => s.id === formData.serviceId);
     if (!selectedService) return 0;
+    
+    // Se for cobrança mensal, retorna o preço fixo
+    if (selectedService.billingType === 'monthly') {
+      return selectedService.price;
+    }
+    
+    // Se for por sessão, multiplica pela frequência semanal × 4 semanas
     return selectedService.price * formData.weeklyFrequency * 4;
   }, [formData.serviceId, formData.weeklyFrequency, services]);
 
@@ -212,7 +219,7 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
                       <option value="">Selecionar serviço...</option>
                       {services.map(service => (
                         <option key={service.id} value={service.id}>
-                          {service.name} - €{service.price}/sessão
+                          {service.name} - €{service.price}/{service.billingType === 'monthly' ? 'mês' : 'sessão'}
                         </option>
                       ))}
                     </select>
@@ -244,7 +251,9 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
                     <p className="text-xs font-medium text-primary">Mensalidade Estimada</p>
                     <p className="mt-1 text-2xl font-bold text-foreground">€{estimatedMonthlyFee.toFixed(2)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {formData.weeklyFrequency}x por semana × 4 semanas
+                      {services.find(s => s.id === formData.serviceId)?.billingType === 'monthly' 
+                        ? 'Valor fixo mensal'
+                        : `${formData.weeklyFrequency}x por semana × 4 semanas`}
                     </p>
                   </div>
                 )}
