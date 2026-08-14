@@ -100,10 +100,10 @@ export function ClientesPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1800px] p-6 pb-12">
+      <main className="mx-auto max-w-[1800px] p-6 pb-24">
         <div className="grid gap-6 lg:grid-cols-[320px,1fr]">
           {/* Lista de Clientes */}
-          <Card>
+          <Card className="max-h-[calc(100vh-12rem)] overflow-hidden flex flex-col">
             <CardHeader
               title="Clientes"
               subtitle={`${filteredClients.length} encontrados`}
@@ -113,9 +113,9 @@ export function ClientesPage() {
                 </div>
               }
             />
-            <CardContent>
+            <CardContent className="flex-1 overflow-hidden flex flex-col">
               {/* Search */}
-              <div className="relative mb-4">
+              <div className="relative mb-4 flex-shrink-0">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
@@ -127,7 +127,7 @@ export function ClientesPage() {
               </div>
 
               {/* Client List */}
-              <div className="space-y-2">
+              <div className="space-y-2 overflow-y-auto flex-1 pr-2">
                 {filteredClients.map((client) => (
                   <button
                     key={client.id}
