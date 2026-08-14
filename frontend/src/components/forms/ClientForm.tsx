@@ -97,30 +97,30 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
   const isLoading = createClient.isPending || updateClient.isPending;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-xl border border-border bg-card shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm overflow-y-auto">
+      <div className="w-full max-w-2xl my-8 rounded-xl border border-border bg-card shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-navy-900 px-6 py-4 rounded-t-xl">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
-              <User className="h-5 w-5 text-white" strokeWidth={2.5} />
+        <div className="flex items-center justify-between border-b border-border bg-navy-900 px-4 py-3 rounded-t-xl sticky top-0 z-10">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+              <User className="h-4 w-4 text-white" strokeWidth={2.5} />
             </div>
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-base font-bold text-white">
               {isEditing ? 'Editar Cliente' : 'Novo Cliente'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
             disabled={isLoading}
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-3">
+        <form id="client-form" onSubmit={handleSubmit} className="p-4 max-h-[calc(100vh-12rem)] overflow-y-auto">
+          <div className="space-y-2.5">
             {/* Nome */}
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -295,26 +295,27 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
               </div>
             )}
           </div>
-
-          {/* Actions */}
-          <div className="mt-5 flex justify-end gap-2 border-t border-border pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted disabled:opacity-50"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-50"
-            >
-              {isLoading ? 'A guardar...' : isEditing ? 'Atualizar Cliente' : 'Criar Cliente'}
-            </button>
-          </div>
         </form>
+
+        {/* Actions - Fixed at bottom */}
+        <div className="sticky bottom-0 flex justify-end gap-2 border-t border-border bg-card px-4 py-3 rounded-b-xl">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isLoading}
+            className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form="client-form"
+            disabled={isLoading}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-50"
+          >
+            {isLoading ? 'A guardar...' : isEditing ? 'Atualizar Cliente' : 'Criar Cliente'}
+          </button>
+        </div>
       </div>
     </div>
   );
