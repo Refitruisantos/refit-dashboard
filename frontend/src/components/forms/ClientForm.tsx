@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { X, User } from 'lucide-react';
+import { X, User, ChevronDown } from 'lucide-react';
 import { useCreateClient, useUpdateClient } from '@/hooks/useClients';
 import { useServices } from '@/hooks/useServices';
 import type { Client } from '@/types/client';
@@ -206,25 +206,50 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Plano de Treino</p>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Serviço</label>
-                    <select
-                      name="serviceId"
-                      value={formData.serviceId}
-                      onChange={handleChange}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      disabled={isLoading}
-                    >
-                      <option value="">Selecionar serviço...</option>
-                      {services.map(service => (
-                        <option key={service.id} value={service.id}>
-                          {service.name} - €{service.price}/{service.billingType === 'monthly' ? 'mês' : 'sessão'}
-                        </option>
-                      ))}
-                    </select>
+                {/* Botões de Escolha de Modalidade */}
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Escolher Modalidade</label>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {services.map(service => (
+                      <button
+                        key={service.id}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, serviceId: service.id }))}
+                        className={`rounded-lg border-2 p-3 text-left transition-all ${
+                          formData.serviceId === service.id
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border bg-background hover:border-primary/50'
+                        }`}
+                        disabled={isLoading}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-sm">{service.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              €{service.price}/{service.billingType === 'monthly' ? 'mês' : 'sessão'}
+                            </p>
+                          </div>
+                          {formData.serviceId === service.id && (
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                    {services.length === 0 && (
+                      <div className="col-span-2 rounded-lg border border-dashed border-border bg-muted/20 p-4 text-center">
+                        <p className="text-sm text-muted-foreground">Nenhum serviço disponível</p>
+                        <p className="text-xs text-muted-foreground">Crie serviços primeiro na página de Serviços</p>
+                      </div>
+                    )}
                   </div>
+                </div>
 
+                {/* Frequência Semanal */}
+                {formData.serviceId && (
                   <div>
                     <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Frequência Semanal</label>
                     <select
@@ -232,7 +257,7 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
                       value={formData.weeklyFrequency}
                       onChange={handleChange}
                       className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      disabled={isLoading || !formData.serviceId}
+                      disabled={isLoading}
                     >
                       <option value="1">1x por semana</option>
                       <option value="2">2x por semana</option>
@@ -243,7 +268,7 @@ export function ClientForm({ client, onClose, onSuccess }: ClientFormProps) {
                       <option value="7">7x por semana</option>
                     </select>
                   </div>
-                </div>
+                )}
 
                 {/* Mensalidade Estimada */}
                 {formData.serviceId && estimatedMonthlyFee > 0 && (
