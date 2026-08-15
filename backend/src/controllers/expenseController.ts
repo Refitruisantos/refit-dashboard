@@ -9,8 +9,8 @@ const createExpenseSchema = z.object({
   category: z.string().min(1, 'Categoria é obrigatória'),
   supplier: z.string().optional(),
   amount: z.number().positive('Valor deve ser positivo'),
-  expenseDate: z.string(),
-  dueDate: z.string(),
+  expenseDate: z.string().optional(),
+  dueDate: z.string().optional(),
   paidAt: z.string().optional(),
   method: z.enum(['mbway', 'transfer', 'cash', 'card', 'debit', 'other']).optional(),
   status: z.enum(['paid', 'pending', 'overdue', 'cancelled']).default('pending'),
@@ -78,10 +78,19 @@ export async function createExpense(req: Request, res: Response) {
   try {
     const validatedData = createExpenseSchema.parse(req.body);
 
+    // Calcular datas automaticamente se não forem fornecidas
+    const expenseDate = validatedData.expenseDate ? new Date(validatedData.expenseDate) : new Date();
+    let dueDate = validatedData.dueDate;
+    if (!dueDate && validatedData.expenseDate) {
+      // Se não houver dueDate, usar expenseDate
+      dueDate = validatedData.expenseDate;
+    }
+
     const expense = await prisma.expense.create({
       data: {
         ...validatedData,
-        dueDate: new Date(validatedData.dueDate),
+        expenseDate,
+        dueDate: dueDate ? new Date(dueDate) : expenseDate,
       },
     });
 
