@@ -30,12 +30,19 @@ export function PaymentForm({ payment, onClose, onSuccess }: PaymentFormProps) {
   const { data: clients = [] } = useClients();
   const { data: services = [] } = useServices({ active: true });
 
+  // Calcular data de vencimento automática (dia 8 do mês)
+  const calculateDueDate = (period: string) => {
+    if (!period) return '';
+    const [year, month] = period.split('-').map(Number);
+    return `${year}-${String(month).padStart(2, '0')}-08`;
+  };
+
   const [formData, setFormData] = useState({
     clientId: payment?.clientId || '',
     serviceId: payment?.serviceId || '',
     amount: payment?.amount || 0,
     period: payment?.period || '',
-    dueDate: payment?.dueDate ? new Date(payment.dueDate).toISOString().split('T')[0] : '',
+    dueDate: payment?.dueDate ? new Date(payment.dueDate).toISOString().split('T')[0] : calculateDueDate(payment?.period || ''),
     paidAt: payment?.paidAt ? new Date(payment.paidAt).toISOString().split('T')[0] : '',
     method: payment?.method || '' as '' | 'mbway' | 'transfer' | 'cash' | 'card' | 'other',
     status: payment?.status || 'pending' as 'paid' | 'pending' | 'overdue' | 'cancelled',
@@ -82,8 +89,9 @@ export function PaymentForm({ payment, onClose, onSuccess }: PaymentFormProps) {
       newErrors.amount = 'Valor deve ser maior que zero';
     }
 
-    if (!formData.dueDate) {
-      newErrors.dueDate = 'Data de vencimento é obrigatória';
+    // Data de vencimento é calculada automaticamente (dia 8 do mês)
+    if (!formData.period) {
+      newErrors.period = 'Período é obrigatório para calcular data de vencimento';
     }
 
     setErrors(newErrors);
@@ -215,34 +223,40 @@ export function PaymentForm({ payment, onClose, onSuccess }: PaymentFormProps) {
 
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Período
+                  Período <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="month"
                   name="period"
                   value={formData.period}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    // Atualizar data de vencimento automaticamente
+                    const newDueDate = calculateDueDate(e.target.value);
+                    setFormData(prev => ({ ...prev, dueDate: newDueDate }));
+                  }}
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   disabled={isLoading}
                 />
+                {errors.period && <p className="mt-1 text-xs text-destructive">{errors.period}</p>}
               </div>
             </div>
 
-            {/* Data de Vencimento e Data de Pagamento */}
+            {/* Data de Vencimento (automática) e Data de Pagamento */}
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Data de Vencimento <span className="text-destructive">*</span>
+                  Data de Vencimento (automática)
                 </label>
                 <input
                   type="date"
                   name="dueDate"
                   value={formData.dueDate}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  disabled={isLoading}
+                  className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground transition-all bg-muted-50 cursor-not-allowed"
+                  disabled={true}
                 />
-                {errors.dueDate && <p className="mt-1 text-xs text-destructive">{errors.dueDate}</p>}
+                <p className="mt-1 text-xs text-muted-foreground">Calculada automaticamente: dia 8 do mês selecionado</p>
               </div>
 
               <div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CreditCard, Plus, Edit2, Trash2, CheckCircle2, Filter, Search } from 'lucide-react';
+import { CreditCard, Plus, Edit2, Trash2, CheckCircle2, Filter, Search, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { usePayments, usePaymentsSummary, useDeletePayment } from '@/hooks/usePayments';
@@ -38,6 +38,7 @@ export function PagamentosPage() {
 
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
+  const currentDay = new Date().getDate();
 
   const { data: payments = [], isLoading } = usePayments();
   const { data: summary } = usePaymentsSummary(currentMonth, currentYear);
@@ -57,6 +58,20 @@ export function PagamentosPage() {
     setEditingPayment(payment);
     setShowForm(true);
   };
+
+  // Verificar pagamentos em atraso (após dia 8)
+  const overduePayments = payments.filter(payment => {
+    if (payment.status !== 'pending') return false;
+    if (!payment.dueDate) return false;
+    
+    const dueDate = new Date(payment.dueDate);
+    const dueDay = dueDate.getDate();
+    const dueMonth = dueDate.getMonth() + 1;
+    const dueYear = dueDate.getFullYear();
+    
+    // Se estamos no mesmo mês/ano e já passou do dia 8
+    return dueMonth === currentMonth && dueYear === currentYear && currentDay > 8;
+  });
 
   const filteredPayments = payments.filter(payment => {
     const matchesSearch = payment.client?.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -143,6 +158,29 @@ export function PagamentosPage() {
       </header>
 
       <main className="mx-auto max-w-[1800px] p-6 pb-12">
+        {/* Alerta de Pagamentos em Atraso */}
+        {overduePayments.length > 0 && (
+          <div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <div className="flex-1">
+                <p className="font-semibold text-destructive">
+                  {overduePayments.length} {overduePayments.length === 1 ? 'pagamento em atraso' : 'pagamentos em atraso'}
+                </p>
+                <p className="text-sm text-destructive/80">
+                  Estes pagamentos deveriam ter sido pagos até dia 8. Contacte os clientes para regularização.
+                </p>
+              </div>
+              <button
+                onClick={() => setStatusFilter('pending')}
+                className="rounded-lg border border-destructive/50 bg-destructive/20 px-4 py-2 text-sm font-medium text-destructive transition-all hover:bg-destructive/30"
+              >
+                Ver Pagamentos Pendentes
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Resumo */}
         {summary && (
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
