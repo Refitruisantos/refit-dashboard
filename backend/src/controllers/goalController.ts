@@ -22,8 +22,8 @@ const createGoalSchema = z.object({
   ]),
   target: z.number().positive('Meta deve ser positiva'),
   unit: z.string().default('€'),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
   periodicity: z.enum(['monthly', 'quarterly', 'annual']).default('monthly'),
   notes: z.string().optional(),
   status: z.enum(['active', 'completed', 'cancelled']).default('active'),
@@ -266,11 +266,16 @@ export async function createGoal(req: Request, res: Response) {
   try {
     const validatedData = createGoalSchema.parse(req.body);
 
+    // Calcular datas automaticamente se não forem fornecidas
+    const now = new Date();
+    const startDate = validatedData.startDate ? new Date(validatedData.startDate) : new Date(now.getFullYear(), now.getMonth(), 1);
+    const endDate = validatedData.endDate ? new Date(validatedData.endDate) : new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
     const goal = await prisma.goal.create({
       data: {
         ...validatedData,
-        startDate: new Date(validatedData.startDate),
-        endDate: new Date(validatedData.endDate),
+        startDate,
+        endDate,
       },
     });
 
