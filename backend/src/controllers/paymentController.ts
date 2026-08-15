@@ -9,7 +9,7 @@ const createPaymentSchema = z.object({
   serviceId: z.string().optional(),
   amount: z.number().positive('Valor deve ser positivo'),
   period: z.string().optional(),
-  dueDate: z.string(),
+  dueDate: z.string().optional(),
   paidAt: z.string().optional(),
   method: z.enum(['mbway', 'transfer', 'cash', 'card', 'other']).optional(),
   status: z.enum(['paid', 'pending', 'overdue', 'cancelled']).default('pending'),
@@ -94,10 +94,17 @@ export async function createPayment(req: Request, res: Response) {
   try {
     const validatedData = createPaymentSchema.parse(req.body);
 
+    // Calcular dueDate automaticamente se não for fornecido (dia 8 do mês)
+    let dueDate = validatedData.dueDate;
+    if (!dueDate && validatedData.period) {
+      const [year, month] = validatedData.period.split('-').map(Number);
+      dueDate = `${year}-${String(month).padStart(2, '0')}-08`;
+    }
+
     const payment = await prisma.payment.create({
       data: {
         ...validatedData,
-        dueDate: new Date(validatedData.dueDate),
+        dueDate: dueDate ? new Date(dueDate) : new Date(),
       },
       include: {
         client: true,
