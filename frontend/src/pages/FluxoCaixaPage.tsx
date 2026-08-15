@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Plus, Trash2, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Trash2, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useCashFlowMovements, useCashFlowSummary, useDeleteCashFlowMovement } from '@/hooks/useCashFlow';
 import { cn, formatCurrency } from '@/lib/utils';
 
@@ -72,10 +71,6 @@ export function FluxoCaixaPage() {
                 <p className="text-sm text-muted-foreground">Visão financeira completa</p>
               </div>
             </div>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Novo Movimento Manual
-            </Button>
           </div>
         </div>
       </header>
