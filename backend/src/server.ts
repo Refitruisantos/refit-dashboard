@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
 import dashboardRouter from './routes/dashboard.js';
 import clientRoutes from './routes/clientRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
@@ -15,6 +16,21 @@ import goalRoutes from './routes/goalRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
+
+// Initialize Prisma Client
+const prisma = new PrismaClient();
+
+// Apply migrations on startup
+async function applyMigrations() {
+  try {
+    console.log('🔄 Checking database schema...');
+    await prisma.$connect();
+    console.log('✅ Database connected successfully');
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+    process.exit(1);
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -54,6 +70,13 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api', authRoutes);
 
-app.listen(PORT, () => {
-  console.log(`🚀 REFIT API running on http://localhost:${PORT}`);
-});
+// Start server
+async function startServer() {
+  await applyMigrations();
+  
+  app.listen(PORT, () => {
+    console.log(`🚀 REFIT API running on http://localhost:${PORT}`);
+  });
+}
+
+startServer();
