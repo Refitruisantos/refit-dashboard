@@ -24,10 +24,25 @@ const prisma = new PrismaClient();
 async function applyMigrations() {
   try {
     console.log('🔄 Checking database schema...');
+    console.log('🔗 DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'NOT SET');
     await prisma.$connect();
     console.log('✅ Database connected successfully');
+    
+    // Test database connection with a simple query
+    const result = await prisma.$queryRaw`SELECT 1 as test`;
+    console.log('✅ Database query test passed:', result);
+    
+    // Check if tables exist
+    const tables = await prisma.$queryRaw`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `;
+    console.log('📊 Database tables:', tables);
+    
   } catch (error) {
     console.error('❌ Database connection failed:', error);
+    console.error('❌ Error details:', error.message);
     process.exit(1);
   }
 }
